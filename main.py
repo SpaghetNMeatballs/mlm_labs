@@ -29,7 +29,10 @@ def arr_shuffle(arr: list) -> list:
 class TestCase:
     def __init__(self, inputs: list, output: float, group: int):
         self.inputs = inputs
-        self.output = output
+        for i in range(len(self.inputs)):
+            self.inputs[i] += 1
+            self.inputs[i] /= 2
+        self.output = (output + 1) / 2
         self.group = group
 
 
@@ -183,7 +186,7 @@ if __name__ == "__main__":
     net = NeuralNet(3, 2, sigmoid, 0.2)
 
     # Запускаем необходимое количество эпох
-    epoch_count = 100
+    epoch_count = 1000
     error_arr = []
     # На каждой эпохе тасуем обучающие кейсы и обучаем нейронку на них
     for i in range(epoch_count):
@@ -195,6 +198,7 @@ if __name__ == "__main__":
     # Загрузим тестовые кейсы и посмотрим на их ошибки
     net.load_test_sets(test_sets)
     net.process()
+    print(net.calc_err())
     fig, [ax1, ax2] = plt.subplots(2, 1)
     err1 = [err[0] for err in error_arr]
     err2 = [err[1] for err in error_arr]
@@ -202,4 +206,3 @@ if __name__ == "__main__":
     ax2.plot([i for i in range(epoch_count)], err2)
     plt.xscale(value="log")
     plt.show()
-
