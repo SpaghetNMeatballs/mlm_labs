@@ -7,13 +7,6 @@ def rand_double(min_inp, max_inp):
     return randint(min_inp, max_inp - 1) + random()
 
 
-def sigmoid(s: float, alpha: float = 0.2) -> float:
-    try:
-        return 1 / (1 + exp(-alpha * s))
-    except OverflowError:
-        print(s)
-
-
 def arr_shuffle(arr: list) -> list:
     returnable = []
     arr_local = arr.copy()
@@ -26,14 +19,29 @@ def arr_shuffle(arr: list) -> list:
     return returnable
 
 
+def sigmoid(s: float, alpha: float = 0.2) -> float:
+    try:
+        return 1 / (1 + exp(-alpha * s))
+    except OverflowError:
+        print(s)
+
+
 class TestCase:
-    def __init__(self, inputs: list, output: float, group: int):
+    def __init__(self, inputs: list[float], output: float, group: int):
         self.inputs = inputs
         for i in range(len(self.inputs)):
             self.inputs[i] += 1
             self.inputs[i] /= 2
         self.output = (output + 1) / 2
         self.group = group
+
+    def __str__(self):
+        returnable = ""
+        for inp in self.inputs:
+            returnable += "%.4f\t" % inp
+        returnable += "%.4f\t" % self.output
+        returnable += "%d" % self.group
+        return returnable
 
 
 def normalize(inp_arr: list) -> list:
@@ -61,7 +69,7 @@ def generate_test_set(size: int = 100) -> list[TestCase]:
 
 class Neuron:
     def __init__(self, weight_amount: int):
-        self.weight = [randint(-5, 5) for i in range(weight_amount + 1)]
+        self.weight = [rand_double(-1, 1) for i in range(weight_amount + 1)]
         self.s = 0
 
     def set_state(self, load: list) -> float:
@@ -181,6 +189,10 @@ if __name__ == "__main__":
     train_sets = generated_sets[:train_size]
     # 20% оставляем на тестирование
     test_sets = generated_sets[train_size:]
+    # Выведем обучающие кейсы
+    '''print("x1\t\tx2\t\tx3\t\ty\t\tgroup (0 = sin(sum(x)), 1 = cos(sum(x))")
+    for case in train_sets:
+        print(case)'''
 
     # Создаём персептрон, загружаем тренировочные кейсы
     net = NeuralNet(3, 2, sigmoid, 0.2)
@@ -198,7 +210,10 @@ if __name__ == "__main__":
     # Загрузим тестовые кейсы и посмотрим на их ошибки
     net.load_test_sets(test_sets)
     net.process()
-    print(net.calc_err())
+    errors = net.calc_err()
+    print(
+        "Средняя ошибка по тестам на первом выходе (синус суммы) = %.3f\nСредняя ошибка по тестам на втором выходе(косинус суммы) = %.3f" % (
+            errors[0], errors[1]))
     fig, [ax1, ax2] = plt.subplots(2, 1)
     err1 = [err[0] for err in error_arr]
     err2 = [err[1] for err in error_arr]
