@@ -4,7 +4,7 @@ from math import sqrt
 
 
 class NeuralNet:
-    def __init__(self, inp_amount: int, out_amount: int, activation, v: float = 0.5):
+    def __init__(self, inp_amount: int, out_amount: int, activation: callable, v: float = 0.5):
         self.neurons = []
         self.sets = []
         self.response = []
@@ -15,7 +15,7 @@ class NeuralNet:
         self.activation = activation
         self.v = v
         for i in range(self.neuron_amount):
-            self.neurons.append(Neuron(inp_amount))
+            self.neurons.append(Neuron(inp_amount, activation))
         self.flush_all()
 
     # Функция для сброса кейсов
