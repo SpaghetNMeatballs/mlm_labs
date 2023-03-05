@@ -49,3 +49,4 @@ class Layer:
                                 range(1, len(self.next_layer.neurons))]) * sigmoid_dif(self.neurons[i].s) for i in
                            range(self.size)]
         if self.prev_layer:
+            pass

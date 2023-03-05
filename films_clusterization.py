@@ -23,7 +23,7 @@ db = []
 RCRIT = 0.5
 V = 0.3
 V_DECR = 0.05
-N = int(V / V_DECR) + 1
+N = int(V / V_DECR)
 
 # Считываем данные из датасета
 with open("movies-tmdb-10000.csv", encoding='utf-8') as csvfile:
@@ -74,7 +74,7 @@ for epoch in range(N):
 
 for i in range(len(neurons)):
     denormalized = denormalize_values(neurons[i], minmaxes)
-    print("=======Группа %d=======" % i)
+    print("=======Группа %d=======" % (i + 1))
     date_denorm = datetime.datetime.now() - datetime.timedelta(days=denormalized[0])
     print("Дата выпуска: %s" % ("%d-%2.d-%2.d" % (date_denorm.year, date_denorm.month, date_denorm.day)).replace(" ",
                                                                                                                  "0"))
