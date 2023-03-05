@@ -9,7 +9,7 @@ def beautify_weight(weights: list[float]) -> str:
         if weights[i] > 0:
             result += '[]'
         else:
-            result += '  '
+            result += '--'
     return result
 
 
@@ -91,8 +91,9 @@ if __name__ == "__main__":
     t = [[db[0][i] for i in range(len(db[0]))]]
 
     for EPOCH in range(EPOCH_COUNT):
+        random.shuffle(db)
         print("Эпоха %d" % (EPOCH + 1))
-        # Распознование образа
+        # Распознавание образа
         for case in db[1:]:
             y_arr = [sum([neuron[i] * case[i] for i in range(len(case))]) for neuron in w]
             flag = sum(y_arr) != 0
@@ -120,7 +121,7 @@ if __name__ == "__main__":
 
     while True:
         first_row = input("Введите фигуру или -1 чтобы выйти:\n")
-        if first_row == -1:
+        if first_row == "-1":
             break
         rows = [input() for i in range(3)]
         case = []
@@ -130,4 +131,4 @@ if __name__ == "__main__":
             for j in rows[i]:
                 case.append(int(j))
         y_arr = [sum([neuron[i] * case[i] for i in range(len(case))]) for neuron in w]
-        print("Пример отнесён к кластеру %d" % (y_arr.index(max(y_arr))))
+        print("Пример отнесён к кластеру %d" % (1 + y_arr.index(max(y_arr))))
