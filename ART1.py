@@ -2,14 +2,15 @@ import random
 
 
 def beautify_weight(weights: list[float]) -> str:
-    result = ""
+    result = "+----+\n|"
     for i in range(len(weights)):
         if i % 4 == 0 and i != 0:
-            result += '\n'
+            result += '|\n|'
         if weights[i] > 0:
-            result += '[]'
+            result += '∎'
         else:
-            result += '--'
+            result += ' '
+    result += "|\n+----+"
     return result
 
 
@@ -79,13 +80,14 @@ if __name__ == "__main__":
     # Константы
     R_CRIT = 0.5
     LAMBDA = 2
-    V = 0.3
+    V = 1
     V_DIF = 0.05
     EPOCH_COUNT = int(V / V_DIF)
+    DB_SIZE = 10000
 
     # Инициализация
     db = []
-    for i in range(50):
+    for i in range(DB_SIZE):
         db.append(linearize_matrix(generate_tetris()))
     w = [[(LAMBDA * db[0][i]) / (LAMBDA - 1 + sum(db[0])) for i in range(len(db[0]))]]
     t = [[db[0][i] for i in range(len(db[0]))]]
@@ -114,8 +116,13 @@ if __name__ == "__main__":
                 t.append([case[i] for i in range(len(case))])
         V -= V_DIF
 
+    stats = [0 for i in w]
+    for case in db:
+        y_arr = [sum([neuron[i] * case[i] for i in range(len(case))]) for neuron in w]
+        stats[y_arr.index(max(y_arr))] += 1
     for i in range(len(w)):
         print('=====Кластер %d=====' % (i + 1))
+        print("Количество кейсов в кластере - %d" % stats[i])
         print(beautify_weight(w[i]))
         print('\n\n')
 
