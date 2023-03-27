@@ -72,6 +72,15 @@ for epoch in range(N):
             neurons[i] = [1 if neurons[i][j] > 1 else neurons[i][j] for j in range(len(neurons[i]))]
     V -= V_DECR
 
+dict = {}
+stats = [0 for i in neurons]
+for i in range(len(neurons)):
+    dict[i] = []
+for case in db:
+    radians = [euclidian(case.keys, ws) for ws in neurons]
+    best_neuron = radians.index(min(radians))
+    stats[best_neuron] += 1
+    dict[best_neuron].append(case.title)
 for i in range(len(neurons)):
     denormalized = denormalize_values(neurons[i], minmaxes)
     print("=======Группа %d=======" % (i + 1))
@@ -81,3 +90,8 @@ for i in range(len(neurons)):
     print("Рейтинг: %.3f" % denormalized[1])
     print("Количество оценок: %.3f" % denormalized[2])
     print("Популярность: %.3f" % denormalized[3])
+    print("Количество кейсов в кластере: %d" % stats[i])
+    if stats[i] <= 5:
+        for j in dict[i]:
+            print(j)
+print("=======ВСЕГО КЕЙСОВ - %d=======" % sum(stats))
