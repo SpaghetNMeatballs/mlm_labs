@@ -1,5 +1,5 @@
 from PIL import Image
-from numpy import array
+from CaseGenerator import Generator
 
 
 def inp_to_case(inp: str) -> list[int]:
@@ -23,7 +23,8 @@ class Hopfield:
             for j in range(self.M):
                 if i == j:
                     continue
-                self.w[i][j] = sum([self.refs[k][i] * self.refs[k][j] for k in range(self.N)])
+                temp = [self.refs[k][i] * self.refs[k][j] for k in range(self.N)]
+                self.w[i][j] = sum(temp)
 
     def _activate(self, s: list[int]) -> list[int]:
         result = []
@@ -34,7 +35,8 @@ class Hopfield:
             result.append(1)
         return result
 
-    def _calc_diff(self, q: list[int], q1: list[int]) -> int:
+    @staticmethod
+    def _calc_diff(q: list[int], q1: list[int]) -> int:
         return sum([q[i] - q1[i] for i in range(len(q))])
 
     def _find_ref(self, inp: list[int]) -> int:
@@ -61,10 +63,11 @@ class Hopfield:
 
 
 def main():
-    refs = [[1, 1, 1, 1, 1, -1, -1, 1, 1, -1, -1, 1, 1, -1, -1, 1],
-            [1, 1, 1, 1, -1, 1, 1, -1, -1, 1, 1, -1, 1, 1, 1, 1]]
+    gen = Generator(128, 128)
+    gen.generate_initial_bank('hopfield_cases', 10)
+    refs = gen.read_from_files('hopfield_cases')
     net = Hopfield(refs)
-    net.process(inp_to_case('1111000000001011'))
+    net.process(gen.apply_noise(50, refs[0]))
 
 
 if __name__ == "__main__":
